@@ -7,12 +7,12 @@ output: pdf_document
 
 This is a short example of running some simple phylogenetic comparative analysis using both pgls and MCMCglmm and also using MCMCglmm to impute data.
 
-Before jumping back into MCMCglmm we will use the caper package to import and manage our phylogentic data: \href{https://cran.r-project.org/web/packages/caper/vignettes/caper.pdf}{caper package see here}
+Before jumping back into MCMCglmm we will use the caper package to import and manage our phylogenetic data: \href{https://cran.r-project.org/web/packages/caper/vignettes/caper.pdf}{caper package see here}
 For more on MCMCglmm see the \href{https://cran.r-project.org/web/packages/MCMCglmm/vignettes/CourseNotes.pdf}{course notes} or \href{https://cran.r-project.org/web/packages/MCMCglmm/vignettes/Overview.pdf}{vignettes}. 
 
 \section{Installation}
 
-First we need to install some packages including the ape and caper packages that run the pgls models and the MCMCglmm package to run the Bayesian version of the phylogenetic comparative analysis.
+First we need to install some packages including the ape and caper packages that run the pgls models and the MCMCglmm package to run the Bayesian version of the phylogenetic comparative analysis. (we did this yesterday so using library() should be enough)
 
 ```{r install_packages, results="hide", message=FALSE, warning=FALSE}
 if(!require(ape)) install.packages("ape")
@@ -20,7 +20,7 @@ if(!require(caper)) install.packages("caper")
 if(!require(MCMCglmm)) install.packages("MCMCglmm")
 ```
 
-We will also install from GitHub the \href{https://github.com/TGuillerme/mulTree}{\texttt{MulTree} package} which is still under development (so watch out for BUGS) but contains some handy data and also will allow us to use MCMCglmm to include the error associated with building phylogenies within our analysis later in the session. We used this data yesterday so you should be familiar with it. TO get it again we need to go back to GitHub
+We will also install from GitHub the \href{https://github.com/TGuillerme/mulTree}{\texttt{MulTree} package} which is still under development (so watch out for BUGS) but contains some handy data and also will allow us to use MCMCglmm to include the error associated with building phylogenies within our analysis later in the session. We used this data yesterday so you should be familiar with it. To get it again we need to go back to GitHub
 To do so we need to get them from GitHub and so we need to run.
 ```{r install_mulTree, results="hide", message=FALSE}
 #if(!require(devtools)) install.packages("devtools")
@@ -83,7 +83,7 @@ glm_mod <- glm(formula = formula_a, family = "gaussian", data = lifespan_mammals
 summary(glm_mod)
 ```
 
-We ran this model yesterday but just to recap so far we are assuming that each data point is independent. We assume that even if two species are closely related to each other that their lifespans are in no way related. We know however that the traits of two very closely related species are likely to be related. For example, a close relative of a large animal, like a whale, would also be expected to be large, especially if the two species split in recent evolutionary time. We accounted for this yesterday to some degree using a random effect of genus but that doesnt really cut the mustard as we have a lot more information we could include. A simple way to do this is using phylogentic information. To include the non-independent nature of our data we will first turn to Phylogenetic generalized linear models (PGLS).
+We ran this model yesterday but just to recap so far we are assuming that each data point is independent. We assume that even if two species are closely related to each other that their lifespans are in no way related. We know however that the traits of two very closely related species are likely to be related. For example, a close relative of a large animal, like a whale, would also be expected to be large, especially if the two species split in recent evolutionary time. We accounted for this yesterday to some degree using a random effect of genus but that doesnt really cut the mustard as we have a lot more information we could include. A simple way to do this is using phylogenetic information. To include the non-independent nature of our data we will first turn to Phylogenetic generalized linear models (PGLS).
 
 \subsection{PGLS}
 In phylogenetic comparative methods we try to deal with this non-independence by using the structure of a phylogeny to weight the error term so that our model fit is no longer blind to the non-independence of our data. 
@@ -168,7 +168,7 @@ prior <- list(R = list(V=1, nu=0.002),
 
 We describe our prior as above for the random (G) and residual variances (R) each of them as a list, which we will in turn put within a list. If we wanted to include more random terms we would include a G2, G3 etc for each additional random term within the G list. We could also specify priors for the fixed terms using B, however MCMCglmm will automatically do that for us and as it  usually does a good job at it we will ignore it here. 
 
-Next we need to decide on the parameters relating to running the mcmc chain in the model. We need to include how many iterations we want to run the the chain for (nitt), the burnin we want to discard at the start of the chain (burnin) and also how often we want to sample and store from the chain (thin). We discard a burnin as we don't want the starting point of the chain to over-influence our final estimates. For now lets just use a burnin of 1/6 of the nitt, just to be safe. The thinning is used to help reduce autocorrelation in our sample, how much you use often depends on how much autocorrelation you find.
+Next we need to decide on the parameters relating to running the mcmc chain in the model. We need to include how many iterations we want to run the chain for (nitt), the burnin we want to discard at the start of the chain (burnin) and also how often we want to sample and store from the chain (thin). We discard a burnin as we don't want the starting point of the chain to over-influence our final estimates. For now lets just use a burnin of 1/6 of the nitt, just to be safe. The thinning is used to help reduce autocorrelation in our sample, how much you use often depends on how much autocorrelation you find.
 
 To save time we will only run this model over 12000 iterations (However, much larger nitt is often required).
 
@@ -447,7 +447,7 @@ col = "grey", cex.main = 0.8)
 
 
 \section{Extending MCMCglmm: Imputing data}
-Another neat abilty of using MCMCglmm is the abilty to impute data. Imputation is essentially estimating some values for missing data using information from other linked data. This could be as simple as using the mean of some distribution or more usefully using the some corelative structure such as calulating expected values in a glm. However MCMCglmm will automatically impute missing data in the response variable allowing you carry out an analysis with some missing data.
+Another neat ability of using MCMCglmm is the ability to impute data. Imputation is essentially estimating some values for missing data using information from other linked data. This could be as simple as using the mean of some distribution or more usefully using the some correlative structure such as calculating expected values in a glm. However, MCMCglmm will automatically impute missing data in the response variable allowing you carry out an analysis with some missing data.
 
 
 
@@ -484,7 +484,7 @@ burnin3 <- c(2000)
 thin3 <- c(5)
 ```
 
-Now we can run our models with missing models. WE dont need to but if we want to record the imputed lifespans of the missing species we can use the pl = TRUE argument.
+Now we can run our models with missing models. We dont need to but if we want to record the imputed lifespans of the missing species we can use the pl = TRUE argument.
 ```{r  mcmc imputation with 10, message=FALSE, warning=FALSE, verbose = FALSE}
 mcmc_imput_10 <- MCMCglmm(fixed =  lifespan10 ~ mass + volant, 
                      random= ~ animal, 
@@ -518,18 +518,18 @@ summary(mcmc_imput_100)
 ```
 
 
-Even with 100 missing values in the response variable our model runs pretty well. Most of this is lilkey to be down to the data missing in a random fashion. If say however all the flying species were missing we simply could not run the model.
+Even with 100 missing values in the response variable our model runs pretty well.Most of this is likely to be down to the data missing in a random fashion. If say however all the flying species were missing we simply could not run the model.
 
-Since we recorded the impututed estimates we can also get values of lifespans for these species which are stored under the heading Liab
+Since we recorded the imputed estimates we can also get values of lifespans for these species which are stored under the heading Liab
 
 ```{r  extract values, message=FALSE, warning=FALSE, verbose = FALSE}
-##as the Liab section stores what the values are for each species along each iteraction 
+##as the Liab section stores what the values are for each species along each iteration  
 ##(even if the values are fixed) we will only look at the first 10
 #notice that 
 head(mcmc_imput_100$Liab)[,1:10]
 ```
 
-The enties along the column are in the same order as the species along our row so if we wnat the estimate for the first species.
+The entries along the column are in the same order as the species along our row so if we want the estimate for the first species.
 ```{r first species, message=FALSE, warning=FALSE, verbose = FALSE}
 rowname(mcmc_data[index10[1],])
 ####plot of the first missing species
@@ -542,9 +542,9 @@ mean(mcmc_imput_100$Liab[,index10[1]])
 mcmc_data[index10[1],c("longevity")]
 ```
 
-Imputation can be used in any of the models shown before. One of the major advangates is that instead of imputing using models without phylogentic corrections MCMCglmm allows this along with any number of random terms.
+Imputation can be used in any of the models shown before. One of the major advantages is that instead of imputing using models without phylogenetic corrections MCMCglmm allows this along with any number of random terms.
 
-As a shamless plub I used this implementtion to develop and package that estimates Trophic discrimination factors for the use in stable isotopes. If intrested heres a step through \href{https://github.com/healyke/DEsiR/blob/master/doc/Introduction-to-DEsiR.Rmd
+As a shameless plug I used this implementation to develop and package that estimates Trophic discrimination factors for the use in stable isotopes. If interested here’s a step through \href{https://github.com/healyke/DEsiR/blob/master/doc/Introduction-to-DEsiR.Rmd
 }{guide} and the \href{https://peerj.com/preprints/1950v1/}{pre-print of the paper}.
 
 
